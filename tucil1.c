@@ -62,7 +62,7 @@ int main(int argc, char **argv){
     Sequence* Seqs;
     int i;
 
-    // textInput("tests/test2.txt", &bufferSize, &M, &seqCount, &Seqs);
+    // textInput("tests/negativeSeq.txt", &bufferSize, &M, &seqCount, &Seqs);
 
     if (argc > 1){
         char TestFolder[100] = "tests/";

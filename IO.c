@@ -25,6 +25,9 @@ int textInput(char* txtPath, int* bufferSize, Matrix* M, int* seqCount, Sequence
         if(sscanf(line, "%d %d", &((*M).width), &((*M).height)) != 2){
             goto matrixSizeFail;
         }
+        else{
+            if ((*M).width < 0 OR ((*M).height) < 0){goto matrixSizeFail;}
+        }
     }
     else{
         matrixSizeFail:
@@ -32,6 +35,7 @@ int textInput(char* txtPath, int* bufferSize, Matrix* M, int* seqCount, Sequence
         goto txtFail;
     }
     CreateMatrix(M);
+    if (M->height == 0 OR M->width == 0){goto matrixSkip;}
 
     // Read Matrix
     int i, j;
@@ -54,10 +58,15 @@ int textInput(char* txtPath, int* bufferSize, Matrix* M, int* seqCount, Sequence
         }
     }
 
+    matrixSkip:
+
     // Read Sequence Amount
     if(fgets(line, 100, fptr)){
         if (sscanf(line, "%d", seqCount) != 1){
             goto seqAmountFail;
+        }
+        else{
+            if (*seqCount < 0){goto seqAmountFail;}
         }
     }
     else{
@@ -69,6 +78,8 @@ int textInput(char* txtPath, int* bufferSize, Matrix* M, int* seqCount, Sequence
     // Read Sequences
     *Seqs = (Sequence*) malloc (sizeof(Sequence) * *seqCount);
     Sequence* currentSeq;
+
+    if (*seqCount == 0) {goto seqSkip;}
 
     traversal(j, 0, *seqCount - 1){
         currentSeq = &((*Seqs)[j]);
@@ -109,6 +120,8 @@ int textInput(char* txtPath, int* bufferSize, Matrix* M, int* seqCount, Sequence
         }
 
     }
+
+    seqSkip:
 
     if(fgets(line, 100, fptr)){
         printf("Extra line detected in txt file\n");
