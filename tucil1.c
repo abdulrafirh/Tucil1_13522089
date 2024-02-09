@@ -125,10 +125,19 @@ int main(int argc, char **argv){
     printf("\n%f ms\n", elapsed);
 
     char response;
+    char decoy;
+    repeatyn:
     printf("\nApakah ingin menyimpan solusi? (y/n)\n>> ");
     scanf("%c", &response);
     if (response == 'y'){
         saveResult(max, TumbalPrint, OptimumCoords, elapsed);
+    }
+    else if(response == 'n'){
+        return 0;
+    }
+    else{
+        scanf("%c", &decoy);
+        goto repeatyn;
     }
     return 0;
 
