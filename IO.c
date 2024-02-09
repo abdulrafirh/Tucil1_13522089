@@ -127,8 +127,18 @@ int randomInput(int* bufferSize, Matrix* M, int* seqCount, Sequence** Seqs){
     char decoy[100];
 
     printf("---------------Generasi permainan secara Random---------------\n\n");
+
+    int invalid;
+
     printf("Masukkan jumlah token unik : ");
-    scanf("%d", &TokenCount);
+    invalid = (scanf("%d", &TokenCount) != 1);
+    if (NOT invalid) {invalid = (TokenCount <= 0);}
+
+    if (invalid) {
+        printf("Jumlah token unik seharusnya integer positif\n");
+        goto randomFail;
+    }
+
     scanf("%c", decoy);
 
     Token* Tokens = (Token*) malloc (sizeof(Token) * TokenCount);
@@ -136,40 +146,77 @@ int randomInput(int* bufferSize, Matrix* M, int* seqCount, Sequence** Seqs){
     printf("Masukkan Token-Token dengan dipisah spasi : \n");
     int i, j;
     traversal(i, 0, TokenCount - 1){
-        scanf("%c%c%c", &(Tokens[i].first), &(Tokens[i].second), decoy);
+        if (scanf("%c%c%c", &(Tokens[i].first), &(Tokens[i].second), decoy) != 3){
+            printf("Masukkan token tidak valid\n");
+            goto randomFail;
+        }
+        if (*decoy != ' ' AND *decoy != '\n'){
+            printf("Masukkan token tidak valid\n");
+            goto randomFail;
+        }
     }
 
     printf("Masukkan ukuran buffer : ");
-    scanf("%d", bufferSize);
+    invalid = (scanf("%d", bufferSize) != 1);
+    if (NOT invalid) {invalid = (*bufferSize < 0);}
+
+    if (invalid) {
+        printf("Ukuran buffer seharusnya integer non negatif\n");
+        goto randomFail;
+    }
 
     printf("Masukkan ukuran matriks (Kolom Baris) : ");
-    scanf("%d %d", &((*M).width), &((*M).height));
+    invalid = (scanf("%d %d", &((*M).width), &((*M).height)) != 2);
+    if (NOT invalid) {invalid = ((*M).width < 0 || (*M).height < 0);}
+
+    if (invalid) {
+        printf("Ukuran matriks seharusnya 2 integer non negatif\n");
+        goto randomFail;
+    }
 
     printf("Masukkan jumlah sekuens : ");
-    scanf("%d", seqCount);
+    invalid = (scanf("%d", seqCount) != 1);
+    if (NOT invalid) {invalid = (*seqCount < 0);}
+
+    if (invalid) {
+        printf("Jumlah sekuens seharusnya integer non negatif\n");
+        goto randomFail;
+    }
 
     int seqSize;
+
     printf("Masukkan panjang maksimal sekuens : ");
-    scanf("%d", &seqSize);
+    invalid = (scanf("%d", &seqSize) != 1);
+    if (NOT invalid) {invalid = (seqSize < 2);}
+
+    if (invalid) {
+        printf("Ukuran buffer seharusnya integer > 1\n");
+        goto randomFail;
+    }
+    scanf("%c", decoy);
 
     // Random Generation
     time_t t;
     srand((unsigned) time(&t));
     CreateMatrix(M);
-    traversal(i, 1, M->height){
-        traversal(j, 1, M->width){
-            ACCESS((*M), j, i) = Tokens[rand() % TokenCount];
+    if (M->height > 0 AND M->width > 0){
+        traversal(i, 1, M->height){
+            traversal(j, 1, M->width){
+                ACCESS((*M), j, i) = Tokens[rand() % TokenCount];
+            }
         }
     }
 
     *Seqs = (Sequence*) malloc (sizeof(Sequence) * *seqCount);
-    traversal(i, 0, *seqCount - 1){
-        CreateSequence(&((*Seqs)[i]), 33);
-        int seqLength = (rand() % (seqSize - 1)) + 2;
-        (*Seqs)[i].size = seqLength;
-        (*Seqs)[i].reward = (rand() % 200) - 100;
-        traversal(j, 0, seqLength - 1){
-            ((*Seqs)[i].buffer)[j] = Tokens[rand() % TokenCount];
+    if (*seqCount > 0){
+        traversal(i, 0, *seqCount - 1){
+            CreateSequence(&((*Seqs)[i]), 33);
+            int seqLength = (rand() % (seqSize - 1)) + 2;
+            (*Seqs)[i].size = seqLength;
+            (*Seqs)[i].reward = (rand() % 200) - 100;
+            traversal(j, 0, seqLength - 1){
+                ((*Seqs)[i].buffer)[j] = Tokens[rand() % TokenCount];
+            }
         }
     }
 
@@ -179,12 +226,18 @@ int randomInput(int* bufferSize, Matrix* M, int* seqCount, Sequence** Seqs){
     printMatrix(*M);
 
     printf("\n---------------Sekuens---------------\n");
-    traversal(j, 0, *seqCount - 1){
-        printSequence((*Seqs)[j]);
-        printf("Bobot : %d", (*Seqs)[j].reward);
-        printf("\n");
+    if (*seqCount > 0){
+        traversal(j, 0, *seqCount - 1){
+            printSequence((*Seqs)[j]);
+            printf("Bobot : %d", (*Seqs)[j].reward);
+            printf("\n");
+        }
     }
     return 0;
+
+    randomFail:
+    printf("Input data random gagal\nProses Terminasi\n");
+    return 1;
 }
 
 int saveResult(int maxPoint, Sequence Result, Coordinate* Coordinates, double time){

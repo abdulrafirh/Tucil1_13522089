@@ -7,6 +7,7 @@
 #include "IO.h"
 
 void findOptimumSequence(Matrix M, Token* Buffer, Sequence* Seqs, Coordinate* visited, int SeqCount, int bufferSize, int horizontal, int currentLength, Coordinate* CurrentOptimumCoords, int* CurrentMax, int* maxBufferSize){
+    if (SeqCount == 0) {return;}
     int currentPoint = BufferPoint(Buffer, Seqs, SeqCount, currentLength);
     
     if (currentPoint > *CurrentMax){
@@ -68,11 +69,13 @@ int main(int argc, char **argv){
         strcat(TestFolder, argv[1]);
 
         if (textInput(TestFolder, &bufferSize, &M, &seqCount, &Seqs) != 0){
-            goto txtFail;
+            goto inputFail;
         }
     }
     else{
-        randomInput(&bufferSize, &M, &seqCount, &Seqs);
+        if (randomInput(&bufferSize, &M, &seqCount, &Seqs)){
+            goto inputFail;
+        }
     }
 
     Token* Buffer = (Token*) malloc (sizeof(Token)*bufferSize + 1);
@@ -129,6 +132,6 @@ int main(int argc, char **argv){
     }
     return 0;
 
-    txtFail:
+    inputFail:
     return 1;
 }

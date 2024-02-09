@@ -33,12 +33,14 @@ void CreateSequence(Sequence* S, int size){
 
 void printMatrix(Matrix M){
     int i, j;
-    traversal(i, 1, M.height){
-        traversal(j, 1, M.width){
-            printToken(ACCESS(M, j, i));
-            printf(" ");
+    if (M.height > 0 AND M.width > 0){
+        traversal(i, 1, M.height){
+            traversal(j, 1, M.width){
+                printToken(ACCESS(M, j, i));
+                printf(" ");
+            }
+            printf("\n");
         }
-        printf("\n");
     }
 }
 
