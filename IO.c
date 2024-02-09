@@ -78,11 +78,16 @@ int textInput(char* txtPath, int* bufferSize, Matrix* M, int* seqCount, Sequence
         if(fgets(line, 100, fptr)){
             i = 0;
             while(line[3*i] != '\0'){
-                if (sscanf((line + 3*i), "%c%c", &(((currentSeq->buffer)[currentSeq->size]).first), &(((currentSeq->buffer)[currentSeq->size]).second)) != 2){
+                if (sscanf((line + 3*i), "%c%c%c", &(((currentSeq->buffer)[currentSeq->size]).first), &(((currentSeq->buffer)[currentSeq->size]).second), &decoy) != 3){
                     goto seqInputFail;
                 }
+                if(decoy != ' ' AND decoy != '\n') {goto seqInputFail;}
                 (currentSeq->size)++;
                 i++;
+            }
+            if (currentSeq->size < 2) {
+                printf("Sequence Too Short\n");
+                goto seqInputFail;
             }
         }
         else{
@@ -102,7 +107,14 @@ int textInput(char* txtPath, int* bufferSize, Matrix* M, int* seqCount, Sequence
             printf("Sequence reward invalid\n");
             goto txtFail;
         }
+
     }
+
+    if(fgets(line, 100, fptr)){
+        printf("Extra line detected in txt file\n");
+        goto txtFail;
+    }
+
     return 0;
 
     txtFail:
