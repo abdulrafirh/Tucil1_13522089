@@ -130,6 +130,5 @@ int main(int argc, char **argv){
     return 0;
 
     txtFail:
-    printf("Failed to read input file\nProcess terminated\n");
     return 1;
 }

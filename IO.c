@@ -35,13 +35,16 @@ int textInput(char* txtPath, int* bufferSize, Matrix* M, int* seqCount, Sequence
 
     // Read Matrix
     int i, j;
+    char decoy;
 
     traversal(i, 1, (*M).height){
         if(fgets(line, 100, fptr)){
+            if (line[3*(*M).width] != '\0') {goto matrixFail;}
             traversal(j, 1, (*M).width){
-                if(sscanf((line + 3*(j - 1)), "%c%c", &(ACCESS((*M), j, i).first), &(ACCESS((*M), j, i).second)) != 2){
+                if(sscanf((line + 3*(j - 1)), "%c%c%c", &(ACCESS((*M), j, i).first), &(ACCESS((*M), j, i).second), &decoy) != 3){
                     goto matrixFail;
                 }
+                if (decoy != ' ' AND decoy != '\n'){goto matrixFail;}
             }
         }
         else{
