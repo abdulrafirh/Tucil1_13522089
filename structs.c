@@ -72,6 +72,21 @@ int HasSequence(Token* Tokens, Sequence Seq, int TokenCount){
     return 0;
 }
 
+int isSeqEq(Sequence Seq1, Sequence Seq2){
+    if (Seq1.size == Seq2.size){
+        int i;
+        traversal(i, 0, Seq1.size - 1){
+            if (NOT isTokenEqual(Seq1.buffer[i], Seq2.buffer[i])){
+                return 0;
+            }
+        }
+        return 1;
+    }
+    else{
+        return 0;
+    }
+}
+
 int BufferPoint(Token* Tokens, Sequence* Seqs, int SeqCount, int TokenCount){
     int point = 0;
     int i;

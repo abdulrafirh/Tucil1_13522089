@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
+#include <math.h>
 #include "IO.h"
 
 int textInput(char* txtPath, int* bufferSize, Matrix* M, int* seqCount, Sequence** Seqs){
@@ -208,6 +209,16 @@ int randomInput(int* bufferSize, Matrix* M, int* seqCount, Sequence** Seqs){
     }
     scanf("%c", decoy);
 
+    int PossibleSequences = 0;
+    traversal(i, 2, seqSize){
+        PossibleSequences += (int)pow((double)TokenCount, (double)i);
+    }
+
+    if (*seqCount > PossibleSequences){
+        printf("Dengan %d token unik tidak memungkinkan dibuat %d sekuens unik\n", TokenCount, *seqCount);
+        goto randomFail;
+    }
+
     // Random Generation
     time_t t;
     srand((unsigned) time(&t));
@@ -223,12 +234,20 @@ int randomInput(int* bufferSize, Matrix* M, int* seqCount, Sequence** Seqs){
     *Seqs = (Sequence*) malloc (sizeof(Sequence) * *seqCount);
     if (*seqCount > 0){
         traversal(i, 0, *seqCount - 1){
+            repeatSeqGeneration:
             CreateSequence(&((*Seqs)[i]), 33);
             int seqLength = (rand() % (seqSize - 1)) + 2;
             (*Seqs)[i].size = seqLength;
             (*Seqs)[i].reward = (rand() % 200) - 100;
             traversal(j, 0, seqLength - 1){
                 ((*Seqs)[i].buffer)[j] = Tokens[rand() % TokenCount];
+            }
+            if (i > 0){
+                traversal(j, 0, i - 1){
+                    if (isSeqEq((*Seqs)[i], (*Seqs)[j])){
+                        goto repeatSeqGeneration;
+                    }
+                }
             }
         }
     }

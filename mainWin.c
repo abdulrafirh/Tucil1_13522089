@@ -10,7 +10,7 @@ void findOptimumSequence(Matrix M, Token* Buffer, Sequence* Seqs, Coordinate* vi
     if (SeqCount == 0) {return;}
     int currentPoint = BufferPoint(Buffer, Seqs, SeqCount, currentLength);
     
-    if (currentPoint > *CurrentMax){
+    if (currentPoint > *CurrentMax || (currentPoint >= *CurrentMax && currentLength < *maxBufferSize)){
         copyCoord(visited, CurrentOptimumCoords);
         // BufferPoint(Buffer, Seqs, SeqCount, currentLength);
         *CurrentMax = currentPoint;

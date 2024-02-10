@@ -46,6 +46,8 @@ void printSequence(Sequence S);
 
 int HasSequence(Token *Tokens, Sequence Seq, int TokenCount);
 
+int isSeqEq(Sequence Seq1, Sequence Seq2);
+
 int BufferPoint(Token *Tokens, Sequence *Seqs, int SeqCount, int TokenCount);
 
 void CoordsToTokens(Matrix M, Coordinate *Coords, Token *Tokens);
