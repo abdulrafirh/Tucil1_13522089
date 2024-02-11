@@ -101,6 +101,14 @@ int textInput(char* txtPath, int* bufferSize, Matrix* M, int* seqCount, Sequence
                 printf("Sequence Too Short\n");
                 goto seqInputFail;
             }
+            if (j > 0){
+                traversal(i, 0, j - 1){
+                    if (isSeqEq((*Seqs)[i], (*Seqs)[j])){
+                        printf("Sequence has to be unique\n");
+                        goto seqInputFail;
+                    }
+                }
+            }
         }
         else{
             seqInputFail:
