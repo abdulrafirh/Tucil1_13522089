@@ -5,6 +5,15 @@
 #include <math.h>
 #include "IO.h"
 
+void empty_stdin (void)
+{
+    ungetc('t', stdin);
+    int c = getchar();
+
+    while (c != '\n' && c != EOF)
+        c = getchar();
+}
+
 int textInput(char* txtPath, int* bufferSize, Matrix* M, int* seqCount, Sequence** Seqs){
     FILE* fptr = fopen(txtPath, "r");
     char line[100];
@@ -44,12 +53,12 @@ int textInput(char* txtPath, int* bufferSize, Matrix* M, int* seqCount, Sequence
 
     traversal(i, 1, (*M).height){
         if(fgets(line, 100, fptr)){
-            if (line[3*(*M).width] != '\0') {goto matrixFail;}
+            if (line[3*(*M).width] != '\0' AND line[3*(*M).width] != '\n' AND line[3*(*M).width] != '\r') {goto matrixFail;}
             traversal(j, 1, (*M).width){
                 if(sscanf((line + 3*(j - 1)), "%c%c%c", &(ACCESS((*M), j, i).first), &(ACCESS((*M), j, i).second), &decoy) != 3){
                     goto matrixFail;
                 }
-                if (decoy != ' ' AND decoy != '\n'){goto matrixFail;}
+                if (decoy != ' ' AND decoy != '\n' AND decoy != '\r'){goto matrixFail;}
             }
         }
         else{
@@ -89,11 +98,11 @@ int textInput(char* txtPath, int* bufferSize, Matrix* M, int* seqCount, Sequence
         // Read sequence of tokens
         if(fgets(line, 100, fptr)){
             i = 0;
-            while(line[3*i] != '\0'){
+            while(line[3*i] != '\0' AND line[3*i] != '\n' AND line[3*i] != '\r'){
                 if (sscanf((line + 3*i), "%c%c%c", &(((currentSeq->buffer)[currentSeq->size]).first), &(((currentSeq->buffer)[currentSeq->size]).second), &decoy) != 3){
                     goto seqInputFail;
                 }
-                if(decoy != ' ' AND decoy != '\n') {goto seqInputFail;}
+                if(decoy != ' ' AND decoy != '\n' AND decoy != '\r') {goto seqInputFail;}
                 (currentSeq->size)++;
                 i++;
             }
@@ -156,12 +165,16 @@ int randomInput(int* bufferSize, Matrix* M, int* seqCount, Sequence** Seqs){
     invalid = (scanf("%d", &TokenCount) != 1);
     if (NOT invalid) {invalid = (TokenCount <= 0);}
 
-    if (invalid) {
+    while(invalid){
         printf("Jumlah token unik seharusnya integer positif\n");
-        goto randomFail;
+        printf("Masukkan jumlah token unik : ");
+        empty_stdin();
+        invalid = (scanf("%d", &TokenCount) != 1);
+        if (NOT invalid) {invalid = (TokenCount <= 0);}
     }
-
-    scanf("%c", decoy);
+    
+    empty_stdin();
+    repeatToken:
 
     Token* Tokens = (Token*) malloc (sizeof(Token) * TokenCount);
 
@@ -170,52 +183,81 @@ int randomInput(int* bufferSize, Matrix* M, int* seqCount, Sequence** Seqs){
     traversal(i, 0, TokenCount - 1){
         if (scanf("%c%c%c", &(Tokens[i].first), &(Tokens[i].second), decoy) != 3){
             printf("Masukkan token tidak valid\n");
-            goto randomFail;
+            goto repeatToken;
         }
-        if (*decoy != ' ' AND *decoy != '\n'){
+        if (*decoy != ' ' AND *decoy != '\n' AND *decoy != '\r'){
             printf("Masukkan token tidak valid\n");
-            goto randomFail;
+            goto tokenInputFail;
         }
+        if (i > 0){
+            traversal(j, 0, (i - 1)){
+                if (isTokenEqual(Tokens[i], Tokens[j])){
+                    printf("Masukkan token harus unik\n");
+                    tokenInputFail:
+                    if(*decoy != '\n') {empty_stdin();}
+                    goto repeatToken;
+                }
+            }
+        }
+    }
+    if (*decoy != '\n' AND *decoy != '\r'){
+        printf("Masukkan token tidak valid (terlalu banyak karakter)\n");
+        goto tokenInputFail;
     }
 
     printf("Masukkan ukuran buffer : ");
     invalid = (scanf("%d", bufferSize) != 1);
     if (NOT invalid) {invalid = (*bufferSize < 0);}
 
-    if (invalid) {
+    while (invalid) {
         printf("Ukuran buffer seharusnya integer non negatif\n");
-        goto randomFail;
+        printf("Masukkan ukuran buffer : ");
+        empty_stdin();
+        invalid = (scanf("%d", bufferSize) != 1);
+        if (NOT invalid) {invalid = (*bufferSize < 0);}
     }
 
     printf("Masukkan ukuran matriks (Kolom Baris) : ");
+    empty_stdin();
     invalid = (scanf("%d %d", &((*M).width), &((*M).height)) != 2);
     if (NOT invalid) {invalid = ((*M).width < 0 || (*M).height < 0);}
 
-    if (invalid) {
+    while (invalid) {
         printf("Ukuran matriks seharusnya 2 integer non negatif\n");
-        goto randomFail;
+        printf("Masukkan ukuran matriks (Kolom Baris) : ");
+        empty_stdin();
+        invalid = (scanf("%d %d", &((*M).width), &((*M).height)) != 2);
+        if (NOT invalid) {invalid = ((*M).width < 0 || (*M).height < 0);}
     }
 
     printf("Masukkan jumlah sekuens : ");
+    empty_stdin();
     invalid = (scanf("%d", seqCount) != 1);
     if (NOT invalid) {invalid = (*seqCount < 0);}
 
-    if (invalid) {
+    while (invalid) {
         printf("Jumlah sekuens seharusnya integer non negatif\n");
-        goto randomFail;
+        printf("Masukkan jumlah sekuens : ");
+        empty_stdin();
+        invalid = (scanf("%d", seqCount) != 1);
+        if (NOT invalid) {invalid = (*seqCount < 0);}
     }
 
     int seqSize;
 
     printf("Masukkan panjang maksimal sekuens : ");
+    empty_stdin();
     invalid = (scanf("%d", &seqSize) != 1);
     if (NOT invalid) {invalid = (seqSize < 2);}
 
-    if (invalid) {
+    while (invalid) {
         printf("Ukuran buffer seharusnya integer > 1\n");
-        goto randomFail;
+        printf("Masukkan panjang maksimal sekuens : ");
+        empty_stdin();
+        invalid = (scanf("%d", &seqSize) != 1);
+        if (NOT invalid) {invalid = (seqSize < 2);}
     }
-    scanf("%c", decoy);
+    empty_stdin();
 
     int PossibleSequences = 0;
     traversal(i, 2, seqSize){
@@ -246,7 +288,7 @@ int randomInput(int* bufferSize, Matrix* M, int* seqCount, Sequence** Seqs){
             CreateSequence(&((*Seqs)[i]), 33);
             int seqLength = (rand() % (seqSize - 1)) + 2;
             (*Seqs)[i].size = seqLength;
-            (*Seqs)[i].reward = (rand() % 200) - 100;
+            (*Seqs)[i].reward = (rand() % 600) - 200;
             traversal(j, 0, seqLength - 1){
                 ((*Seqs)[i].buffer)[j] = Tokens[rand() % TokenCount];
             }
