@@ -5,13 +5,16 @@
 #include <math.h>
 #include "IO.h"
 
-void empty_stdin (void)
-{
+void empty_stdin (void){
     ungetc('t', stdin);
     int c = getchar();
 
     while (c != '\n' && c != EOF)
         c = getchar();
+}
+
+int isValidTokenChar(char c){
+    return ((c >= 48 AND c <= 57) OR (c >= 65 AND c <= 90));
 }
 
 int textInput(char* txtPath, int* bufferSize, Matrix* M, int* seqCount, Sequence** Seqs){
@@ -59,6 +62,7 @@ int textInput(char* txtPath, int* bufferSize, Matrix* M, int* seqCount, Sequence
                     goto matrixFail;
                 }
                 if (decoy != ' ' AND decoy != '\n' AND decoy != '\r'){goto matrixFail;}
+                if (NOT (isValidTokenChar(ACCESS((*M), j, i).first) AND isValidTokenChar(ACCESS((*M), j, i).second))) {goto matrixFail;}
             }
         }
         else{
@@ -188,6 +192,10 @@ int randomInput(int* bufferSize, Matrix* M, int* seqCount, Sequence** Seqs){
         if (*decoy != ' ' AND *decoy != '\n' AND *decoy != '\r'){
             printf("Masukkan token tidak valid\n");
             goto tokenInputFail;
+        }
+        if (NOT (isValidTokenChar(Tokens[i].first) AND isValidTokenChar(Tokens[i].second))){
+            printf("Token hanya boleh terdiri dari huruf kapital dan angka 0-9\n");
+            goto repeatToken;
         }
         if (i > 0){
             traversal(j, 0, (i - 1)){
