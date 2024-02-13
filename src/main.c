@@ -3,20 +3,20 @@
 #include <string.h>
 #include <math.h>
 #include <time.h>
-#include "raylib.h"
-#include "button.h"
-#include "text_box.h"
-#include "macros.h"
-#include "structs.h"
-#include "IO.h"
+#include "include/raylib.h"
+#include "include/button.h"
+#include "include/text_box.h"
+#include "include/macros.h"
+#include "include/structs.h"
+#include "include/IO.h"
 
-void findOptimumSequence(TokenMatrix M, Token* Buffer, Sequence* Seqs, Coordinate* visited, int SeqCount, int bufferSize, int horizontal, int currentLength, Coordinate* CurrentOptimumCoords, int* CurrentMax, int* maxBufferSize){
+void findOptimumSequence(TokenMatrix M, Token* Buffer, Sequence* Seqs, Coordinate* visited, int SeqCount, 
+  int bufferSize, int horizontal, int currentLength, Coordinate* CurrentOptimumCoords, int* CurrentMax, int* maxBufferSize){
     if (SeqCount == 0) {return;}
     int currentPoint = BufferPoint(Buffer, Seqs, SeqCount, currentLength);
     
     if (currentPoint > *CurrentMax || (currentPoint >= *CurrentMax && currentLength < *maxBufferSize)){
         copyCoord(visited, CurrentOptimumCoords);
-        // BufferPoint(Buffer, Seqs, SeqCount, currentLength);
         *CurrentMax = currentPoint;
         *maxBufferSize = currentLength;
     }
@@ -41,7 +41,8 @@ void findOptimumSequence(TokenMatrix M, Token* Buffer, Sequence* Seqs, Coordinat
                 visited[currentLength + 1] = NullCoordinate;
                 Buffer[currentLength] = ACCESS(M, nextCoord.x, nextCoord.y);
                 Buffer[currentLength + 1] = NullToken;
-                findOptimumSequence(M, Buffer, Seqs, visited, SeqCount, bufferSize, NOT horizontal, currentLength + 1, CurrentOptimumCoords, CurrentMax, maxBufferSize);
+                findOptimumSequence(M, Buffer, Seqs, visited, SeqCount, bufferSize, 
+                  NOT horizontal, currentLength + 1, CurrentOptimumCoords, CurrentMax, maxBufferSize);
             }
         }
     }
@@ -53,7 +54,8 @@ void findOptimumSequence(TokenMatrix M, Token* Buffer, Sequence* Seqs, Coordinat
                 visited[currentLength + 1] = NullCoordinate;
                 Buffer[currentLength] = ACCESS(M, nextCoord.x, nextCoord.y);
                 Buffer[currentLength + 1] = NullToken;
-                findOptimumSequence(M, Buffer, Seqs, visited, SeqCount, bufferSize, NOT horizontal, currentLength + 1, CurrentOptimumCoords, CurrentMax, maxBufferSize);
+                findOptimumSequence(M, Buffer, Seqs, visited, SeqCount, bufferSize, 
+                  NOT horizontal, currentLength + 1, CurrentOptimumCoords, CurrentMax, maxBufferSize);
             }
         }
     }
@@ -122,6 +124,19 @@ void drawResultSpace(TokenMatrix M, Sequence* Seqs, int SeqCount, Rectangle* Cel
 
 void showSol(TokenMatrix M, Sequence* Seqs, Coordinate* OptimumCoords, int MaxPoint, int usedBuffer, Rectangle* Cells, Rectangle* SeqsBackground, int iteration, char* currentBuffer, int* filledBuffer, Sound* nani, double elapsed){
     int i;
+
+    if (usedBuffer == 0){
+        DrawText("EMPTY BUFFER", 610, 612.5 + 45*0.5 - 20*0.5, 20, BLACK);
+        char pointText[20];
+        sprintf(pointText, "Points : %d", MaxPoint);
+        DrawText(pointText, 1190 - MeasureText(pointText, 20), 555 + 45*0.5 - 20*0.5, 20, GREEN);
+
+        char resultText[50];
+        sprintf(resultText, "Solution Found in %lf ms", elapsed);
+        DrawText(resultText, 610, 95, 20, GREEN);
+        return;
+    }
+
     int top = ((iteration) > (usedBuffer - 1)) ? (usedBuffer - 1) : (iteration);
 
     char currentToken[3];
@@ -547,14 +562,16 @@ int main(){
                 int i;
                 int bufferLength = TumbalPrint.size;
 
-                traversal(i, 0, bufferLength - 1){
-                    fprintf(fptr, "%c%c", TumbalPrint.buffer[i].first, TumbalPrint.buffer[i].second);
-                    if (i < bufferLength - 1) {fprintf(fptr, " ");}
-                }
-                fprintf(fptr, "\n");
+                if (bufferLength > 0){
+                    traversal(i, 0, bufferLength - 1){
+                        fprintf(fptr, "%c%c", TumbalPrint.buffer[i].first, TumbalPrint.buffer[i].second);
+                        if (i < bufferLength - 1) {fprintf(fptr, " ");}
+                    }
+                    fprintf(fptr, "\n");
 
-                traversal(i, 0, bufferLength - 1){
-                    fprintf(fptr, "%d,%d\n", OptimumCoords[i].x, OptimumCoords[i].y);
+                    traversal(i, 0, bufferLength - 1){
+                        fprintf(fptr, "%d,%d\n", OptimumCoords[i].x, OptimumCoords[i].y);
+                    }
                 }
                 fprintf(fptr, "\n");
 

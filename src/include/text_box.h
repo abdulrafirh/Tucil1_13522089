@@ -1,7 +1,7 @@
 #ifndef TEXT_BOX_H
 #define TEXT_BOX_H
 
-#include "raygui.h"
+#include "raylib.h"
 
 typedef struct text_box{
     Rectangle rect;

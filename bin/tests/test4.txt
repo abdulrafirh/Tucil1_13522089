@@ -1,0 +1,9 @@
+2
+2 2
+AB CD
+CD AB
+2
+AB AB
+100
+CD CD
+20
