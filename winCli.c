@@ -62,8 +62,6 @@ int main(int argc, char **argv){
     Sequence* Seqs;
     int i;
 
-    // textInput("tests/negativeSeq.txt", &bufferSize, &M, &seqCount, &Seqs);
-
     if (argc > 1){
         char TestFolder[100] = "tests/";
         strcat(TestFolder, argv[1]);

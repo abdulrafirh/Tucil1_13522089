@@ -33,6 +33,11 @@ int textInput(char* txtPath, int* bufferSize, TokenMatrix* M, int* seqCount, Seq
     FILE* fptr = fopen(txtPath, "r");
     char line[100];
 
+    if (NOT exists(txtPath)){
+        printf("Invalid File\n");
+        goto txtFail;
+    }
+
     // Read Buffer Size
     if(fgets(line, 100, fptr)){
         if (sscanf(line, "%d", bufferSize) != 1){

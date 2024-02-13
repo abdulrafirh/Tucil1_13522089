@@ -1,0 +1,1 @@
+gcc -o unixCli unixCli.c include/IO.c include/structs.c -Wall -lm
