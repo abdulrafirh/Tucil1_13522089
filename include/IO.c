@@ -17,7 +17,19 @@ int isValidTokenChar(char c){
     return ((c >= 48 AND c <= 57) OR (c >= 65 AND c <= 90));
 }
 
-int textInput(char* txtPath, int* bufferSize, Matrix* M, int* seqCount, Sequence** Seqs){
+int exists(const char *fname)
+{
+    FILE *file;
+    if ((file = fopen(fname, "r")))
+    {
+        fclose(file);
+        return 1;
+    }
+    return 0;
+}
+
+int textInput(char* txtPath, int* bufferSize, TokenMatrix* M, int* seqCount, Sequence** Seqs){
+    
     FILE* fptr = fopen(txtPath, "r");
     char line[100];
 
@@ -33,7 +45,7 @@ int textInput(char* txtPath, int* bufferSize, Matrix* M, int* seqCount, Sequence
         goto txtFail;
     }
 
-    // Read Matrix Size
+    // Read TokenMatrix Size
     if(fgets(line, 100, fptr)){
         if(sscanf(line, "%d %d", &((*M).width), &((*M).height)) != 2){
             goto matrixSizeFail;
@@ -44,13 +56,13 @@ int textInput(char* txtPath, int* bufferSize, Matrix* M, int* seqCount, Sequence
     }
     else{
         matrixSizeFail:
-        printf("Matrix size invalid\n");
+        printf("TokenMatrix size invalid\n");
         goto txtFail;
     }
-    CreateMatrix(M);
+    CreateTokenMatrix(M);
     if (M->height == 0 OR M->width == 0){goto matrixSkip;}
 
-    // Read Matrix
+    // Read TokenMatrix
     int i, j;
     char decoy;
 
@@ -67,7 +79,7 @@ int textInput(char* txtPath, int* bufferSize, Matrix* M, int* seqCount, Sequence
         }
         else{
             matrixFail:
-            printf("Matrix Invalid\n");
+            printf("TokenMatrix Invalid\n");
             goto txtFail;
         }
     }
@@ -157,7 +169,7 @@ int textInput(char* txtPath, int* bufferSize, Matrix* M, int* seqCount, Sequence
     return 1;
 }
 
-int randomInput(int* bufferSize, Matrix* M, int* seqCount, Sequence** Seqs){
+int randomInput(int* bufferSize, TokenMatrix* M, int* seqCount, Sequence** Seqs){
     int TokenCount;
     char decoy[100];
 
@@ -280,7 +292,7 @@ int randomInput(int* bufferSize, Matrix* M, int* seqCount, Sequence** Seqs){
     // Random Generation
     time_t t;
     srand((unsigned) time(&t));
-    CreateMatrix(M);
+    CreateTokenMatrix(M);
     if (M->height > 0 AND M->width > 0){
         traversal(i, 1, M->height){
             traversal(j, 1, M->width){
@@ -313,7 +325,7 @@ int randomInput(int* bufferSize, Matrix* M, int* seqCount, Sequence** Seqs){
     printf("\n---------------Hasil Generasi Random---------------\n");
 
     printf("\n---------------Matriks---------------\n");
-    printMatrix(*M);
+    printTokenMatrix(*M);
 
     printf("\n---------------Sekuens---------------\n");
     if (*seqCount > 0){

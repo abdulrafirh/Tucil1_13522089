@@ -2,11 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/time.h>
-#include "macros.h"
-#include "structs.h"
-#include "IO.h"
+#include "include/macros.h"
+#include "include/structs.h"
+#include "include/IO.h"
 
-void findOptimumSequence(Matrix M, Token* Buffer, Sequence* Seqs, Coordinate* visited, int SeqCount, int bufferSize, int horizontal, int currentLength, Coordinate* CurrentOptimumCoords, int* CurrentMax, int* maxBufferSize){
+void findOptimumSequence(TokenMatrix M, Token* Buffer, Sequence* Seqs, Coordinate* visited, int SeqCount, int bufferSize, int horizontal, int currentLength, Coordinate* CurrentOptimumCoords, int* CurrentMax, int* maxBufferSize){
     if (SeqCount == 0) {return;}
     int currentPoint = BufferPoint(Buffer, Seqs, SeqCount, currentLength);
     
@@ -56,7 +56,7 @@ void findOptimumSequence(Matrix M, Token* Buffer, Sequence* Seqs, Coordinate* vi
 }
 
 int main(int argc, char **argv){
-    Matrix M;
+    TokenMatrix M;
     int bufferSize;
     int seqCount;
     Sequence* Seqs;

@@ -12,7 +12,7 @@ typedef struct matrix{
     int width;
     int height;
     Token* buffer;
-} Matrix;
+} TokenMatrix;
 
 typedef struct sequence{
     int size;
@@ -36,11 +36,11 @@ void printToken(Token token);
 
 void printCoord(Coordinate Coord);
 
-void CreateMatrix(Matrix* M);
+void CreateTokenMatrix(TokenMatrix* M);
 
 void CreateSequence(Sequence* S, int size);
 
-void printMatrix(Matrix M);
+void printTokenMatrix(TokenMatrix M);
 
 void printSequence(Sequence S);
 
@@ -50,7 +50,7 @@ int isSeqEq(Sequence Seq1, Sequence Seq2);
 
 int BufferPoint(Token *Tokens, Sequence *Seqs, int SeqCount, int TokenCount);
 
-void CoordsToTokens(Matrix M, Coordinate *Coords, Token *Tokens);
+void CoordsToTokens(TokenMatrix M, Coordinate *Coords, Token *Tokens);
 
 int HasCoord(Coordinate *Coords, Coordinate Coord);
 

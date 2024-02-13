@@ -21,7 +21,7 @@ void printCoord(Coordinate Coord){
     printf("%d,%d", Coord.x, Coord.y);
 }
 
-void CreateMatrix(Matrix* M){
+void CreateTokenMatrix(TokenMatrix* M){
     M->buffer = (Token*) malloc (sizeof(Token) * M->width * M->height);
 }
 
@@ -31,7 +31,7 @@ void CreateSequence(Sequence* S, int size){
     S->reward = 0;
 }
 
-void printMatrix(Matrix M){
+void printTokenMatrix(TokenMatrix M){
     int i, j;
     if (M.height > 0 AND M.width > 0){
         traversal(i, 1, M.height){
@@ -98,7 +98,7 @@ int BufferPoint(Token* Tokens, Sequence* Seqs, int SeqCount, int TokenCount){
     return point;
 }
 
-void CoordsToTokens(Matrix M, Coordinate* Coords, Token* Tokens){
+void CoordsToTokens(TokenMatrix M, Coordinate* Coords, Token* Tokens){
     int i = 0;
     while(NOT isCoordinateEqual(Coords[i], NullCoordinate)){
         Tokens[i] = ACCESS(M, Coords[i].x, Coords[i].y);
